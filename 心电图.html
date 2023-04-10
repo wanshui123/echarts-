@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8" />
+    <!-- 引入刚刚下载的 ECharts 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+  </head>
+
+  <body>
+    <div id="main" style="width: 600px;height:400px;"></div>
+    <div id="totalFlowRate" style="width: 600px;height:400px;"></div>
+    <script type="text/javascript">
+      var xAxisData1 = [];
+      var yAxisData1 = [];
+      for (var i = 20; i > 0; i--) {
+        xAxisData1.push(i + '');
+        yAxisData1.push('');
+      }
+      var myChart = echarts.init(document.getElementById('main'));
+      var option = {
+        title: {
+          text: '心电图'
+        },
+        dataZoom: [{
+          type: 'slider',
+          show: false,
+          xAxisIndex: [0],
+          end: 100, //初始化滚动条
+          textStyle: {
+            show: false
+          },
+          backgroundColor: '#fff',
+          showDataShadow: true,//是否显示数据阴影 默认auto
+          showDetail: false,//即拖拽时候是否显示详细数值信息 默认true
+          handleSize: 35,
+        }],
+        xAxis: {
+          data: xAxisData1,
+          show: true
+        },
+        yAxis: {
+          interval: 0.2,
+          max: 1,
+          min: 0
+        },
+        series: [
+          {
+            symbol: 'none',
+            type: 'line',
+            data: yAxisData1
+          }
+        ]
+      }
+      let num = 0
+      let time = new Date().getTime()
+      const timer = setInterval(() => {
+        // xAxisData1.push(Math.random() + '秒前')
+        // yAxisData1.push(Math.random())
+        if (num > 20) {
+          xAxisData1.push(new Date().getTime() - time + '')
+          yAxisData1.push(Math.random())
+          option.dataZoom[0].show = true
+        } else {
+          yAxisData1.splice(num, 1, Math.random())
+          xAxisData1.splice(num, 1, new Date().getTime() - time + '')
+        }
+        const alen = xAxisData1.slice(-20, -1)
+        const len = alen.length
+        option.dataZoom[0].startValue = alen[0]
+        option.dataZoom[0].endValue = alen[len - 1]
+        num++
+        if (num == 200) {
+          clearInterval(timer)
+          // xAxisData1.splice(0, 20)
+          // yAxisData1.splice(0, 20)
+        }
+        myChart.setOption(option);
+      }, 50)
+
+    </script>
+  </body>
+
+</html>
